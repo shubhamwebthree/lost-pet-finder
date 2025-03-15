@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "lost-pet-finder-backend": {
+      "main": "src/lost-pet-finder-backend/main.mo",
+      "type": "motoko"
+    },
+    "lost-pet-finder-frontend": {
+      "dependencies": [
+        "lost-pet-finder-backend"
+      ],
+      "source": [
+        "src/lost-pet-finder-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "lost-pet-finder-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
