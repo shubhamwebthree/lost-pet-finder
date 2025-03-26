@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { lost_pet_finder_backend } from 'declarations/lost-pet-finder-backend';
+import React, { useState,useRef } from 'react';
+import { lost_pet_finder_backend } from '../../../declarations/lost-pet-finder-backend';
 import { useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -11,12 +11,13 @@ const ReportPetForm = ({ actor }) => {
   const [photo, setPhoto] = useState(null);
   const [location, setLocation] = useState('');
   const [contact, setContact] = useState('');
-  const [countryCode, setCountryCode] = useState('+1'); // Default country code
+  const [countryCode, setCountryCode] = useState('+1');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [petId, setPetId] = useState(null);
   const [error, setError] = useState('');
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const fileInputRef = useRef(null);
 
 
   const navigate = useNavigate();
@@ -27,34 +28,33 @@ const ReportPetForm = ({ actor }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const arrayBuffer = reader.result;
-        setPhoto(arrayBuffer);
+        setPhoto(new Uint8Array(arrayBuffer)); 
       };
       reader.readAsArrayBuffer(file);
     }
   };
 
-  const fetchLocationSuggestions = async (query) => {
-    if (!query) {
-      setLocationSuggestions([]);
-      return;
-    }
+  // const fetchLocationSuggestions = async (query) => {
+  //   if (!query) {
+  //     setLocationSuggestions([]);
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
-      );
-      const data = await response.json();
-      setLocationSuggestions(data);
-      setShowSuggestions(true);
-    } catch (error) {
-      console.error("Error fetching location suggestions:", error);
-    }
-  };
+  //   try {
+  //       const response = await fetch(`http://localhost:5000/api/location?query=${query}`);
+
+  //     const data = await response.json();
+  //     setLocationSuggestions(data);
+  //     setShowSuggestions(true);
+  //   } catch (error) {
+  //     console.error("Error fetching location suggestions:", error);
+  //   }
+  // };
 
   const handleLocationChange = (e) => {
     const query = e.target.value;
     setLocation(query);
-    fetchLocationSuggestions(query);
+    // fetchLocationSuggestions(query);
   };
 
   const handleSelectLocation = (selectedLocation) => {
@@ -62,18 +62,24 @@ const ReportPetForm = ({ actor }) => {
     setLocationSuggestions([]);
     setShowSuggestions(false);
   };
+  
 
+  const handleContactChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ''); 
+    if (value.length > 10) value = value.slice(0, 10);    
+    setContact(value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!petType || !description || !photo || !location || !contact) {
       setError('Please fill in all fields');
       return;
     }
-
-    const fullContact = `${countryCode} ${contact}`; // Append country code
-
+  
+    const fullContact = `${countryCode} ${contact}`;
+  
     setIsSubmitting(true);
     setError('');
 
@@ -83,11 +89,11 @@ const ReportPetForm = ({ actor }) => {
         statusVariant,
         petType,
         description,
-        new Uint8Array(photo),
+        photo,
         location,
         fullContact
       );
-
+  
       setPetId(id);
       setStatus('Lost');
       setPetType('');
@@ -95,7 +101,11 @@ const ReportPetForm = ({ actor }) => {
       setPhoto(null);
       setLocation('');
       setContact('');
-      setCountryCode('+1'); // Reset to default country code
+      setCountryCode('+1');
+  
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''; // ✅ Reset file input field
+      }
     } catch (err) {
       console.error('Error reporting pet:', err);
       setError(`Failed to report pet: ${err.message || 'Unknown error'}`);
@@ -248,7 +258,7 @@ const ReportPetForm = ({ actor }) => {
               <input
                 type="text"
                 value={contact}
-                onChange={(e) => setContact(e.target.value)}
+                onChange={handleContactChange}
                 placeholder="Phone number"
                 required
                 className="block w-full p-3 border border-gray-300 rounded-md shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

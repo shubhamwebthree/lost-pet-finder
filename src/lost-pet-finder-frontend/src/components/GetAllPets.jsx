@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { lost_pet_finder_backend } from "declarations/lost-pet-finder-backend";
+import { lost_pet_finder_backend } from "../../../declarations/lost-pet-finder-backend";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -87,7 +87,7 @@ const GetAllPets = () => {
             ))}
           </select>
         </div>
-            
+
         {/* 🐶 Pet List */}
         {filteredPets.length === 0 ? (
           <p className="text-center">No matching pets found.</p>
@@ -97,16 +97,15 @@ const GetAllPets = () => {
               <li key={pet.id} className=" p-4 rounded-lg shadow">
                 {/* <p className="block text-gray-700 font-semibold text-lg">Id: {pet.petId}</p> */}
                 <p className="block text-gray-700 font-semibold text-lg">{pet.petType}</p>
-                <p>{pet.description}</p>
+                <p className="text-gray-700 text-lg">{pet.description}</p>
                 <p className="block text-gray-700 font-semibold text-lg">Location: {pet.location}</p>
                 {pet.photo && (
                   <img
                     src={getBase64FromArrayBuffer(pet.photo)}
                     alt={pet.petType}
-                    className="block mx-auto mt-2 w-full max-w-xs rounded-lg"
+                    className="block mx-auto mt-2 mb-2 w-full max-w-xs rounded-lg"
                   />
                 )}
-                <br />
                 <p className="block text-gray-700 font-semibold text-lg">Contact: {pet.contact}</p>
                 <p className="block text-gray-700 font-semibold text-lg">
                   Status: {pet.status && typeof pet.status === "object" ? Object.keys(pet.status)[0] : "Unknown"}

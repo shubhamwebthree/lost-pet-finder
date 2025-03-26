@@ -3,10 +3,19 @@ import Navbar from "./components/Navbar";
 import ReportPetForm from "./components/ReportPetForm";
 import GetAllPets from "./components/GetAllPets";
 import Footer from "./components/Footer";
-
+import { useAuth } from "./components/context/AuthContext";
 
 function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
+
+  const handleNavigation = (path) => {
+    if (!isAuthenticated) {
+      login(); 
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -23,13 +32,13 @@ function Home() {
 
         <div className="flex space-x-4 mt-6">
           <button
-            onClick={() => navigate("/report-pet")}
+            onClick={() => handleNavigation("/report-pet")}
             className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
           >
             Report Pet
           </button>
           <button
-            onClick={() => navigate("/all-pets")}
+            onClick={() => handleNavigation("/all-pets")}
             className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
           >
             Pet Logs
@@ -42,7 +51,6 @@ function Home() {
 }
 
 function App() {
-  
   return (
     <Router>
       <Routes>
@@ -51,7 +59,6 @@ function App() {
         <Route path="/all-pets" element={<GetAllPets />} />
       </Routes>
     </Router>
-    
   );
 }
 

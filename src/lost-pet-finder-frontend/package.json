@@ -14,6 +14,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@dfinity/agent": "^1.4.0",
+    "@dfinity/auth-client": "^0.10.3",
+    "@dfinity/authentication": "^0.10.3",
+    "@dfinity/identity": "^0.10.3",
     "@dfinity/candid": "^1.4.0",
     "@dfinity/principal": "^1.4.0"
   },
